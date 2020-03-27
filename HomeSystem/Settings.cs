@@ -65,6 +65,10 @@ namespace HomeSystem
                 {
                     ini.Write(textBox10.Text, "Special", comboBox2.Text);
                 }
+                if(keyboard_timer)
+                {
+                    ini.Write(textBox10.Text, "timer", textBox5.Text);
+                }
                 MessageBox.Show("ok");
             }
             else
@@ -98,6 +102,7 @@ namespace HomeSystem
         private void Settings_Load(object sender, EventArgs e)
         {
             textBox1.Text = ini.getParam("Speech", "Core");
+            textBox11.Text = Application.StartupPath + @"\Intellect\Jarvis\Да сэр.mp3";
             comboBox1.Items.Clear();
             var section = ini.SectionNames();
             if (section != null)
@@ -148,13 +153,17 @@ namespace HomeSystem
                 MessageBox.Show("Удалено: " + comboBox1.Text);
                 comboBox1.Items.Clear();
                 var section = ini.SectionNames();
-                foreach (var item in section)
+                if(section != null)
                 {
-                    if (item.ToString() != "Speech")
+                    foreach (var item in section)
                     {
-                        comboBox1.Items.Add(item.ToString());
+                        if (item.ToString() != "Speech")
+                        {
+                            comboBox1.Items.Add(item.ToString());
+                        }
                     }
                 }
+
                 comboBox1.Text = "";
                 textBox3.Text = "";
                 textBox4.Text = "";
@@ -236,5 +245,22 @@ namespace HomeSystem
             SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
         }
 
+        bool keyboard_timer = false;
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.Text == "включить нумлок" || comboBox2.Text == "включить капслок" || comboBox2.Text == "включить скроллок")
+            {
+                label7.Visible = true;
+                textBox5.Visible = true;
+                keyboard_timer = true;
+            }
+            else
+            {
+                keyboard_timer = false;
+                label7.Visible = false;
+                textBox5.Visible = false;
+            }
+
+        }
     }
 }

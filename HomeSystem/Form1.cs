@@ -77,6 +77,9 @@ namespace HomeSystem
                 CAPS.Visible = true;
             }
         }
+        int time_num = 0;
+        int time_scroll = 0;
+        int time_caps = 0;
         private void Form1_Load(object sender, EventArgs e)
         {
             load_params();
@@ -150,6 +153,8 @@ namespace HomeSystem
                         string mainkey = ini.getParam("Speech", "Core");
                         string program = ini.Read(item.ToString(), "Program");
                         string special = ini.Read(item.ToString(), "Special");
+                        string timer = ini.Read(item.ToString(), "timer");
+                        if(timer == string.Empty) { timer = "0"; }
                         if (e.Result.Text == mainkey + " " + item.ToString())
                         {
                             if (Path.GetExtension(sound) == ".mp3" && sound != string.Empty)
@@ -162,21 +167,22 @@ namespace HomeSystem
                             }
                             if (special != string.Empty)
                             {
-                                special_commands(special);
+                                special_commands(special, timer);
                             }
                         }
                     }
                     label1.Text = (e.Result.Text);
                 }
             }
-            catch (Exception)
+            catch ( Exception ex )
             {
-                throw;
+                MessageBox.Show(ex.Message);
             }
            
         }
-        void special_commands(string special)
+        void special_commands(string special, string timer)
         {
+            int time = Convert.ToInt32(timer);
             switch (special)
             {
                 case "немедленно остановить звуки":
@@ -185,6 +191,9 @@ namespace HomeSystem
                 case "включить нумлок":
                     microcontroller.SetNumLockKey(true);
                     NUM.BackColor = System.Drawing.Color.Green;
+                    Thread.Sleep(time * 1000);
+                    microcontroller.SetNumLockKey(false);
+                    NUM.BackColor = System.Drawing.Color.White;
                     break;
                 case "выключить нумлок":
                     microcontroller.SetNumLockKey(false);
@@ -193,6 +202,9 @@ namespace HomeSystem
                 case "включить капслок":
                     microcontroller.SetCapsLockKey(true);
                     CAPS.BackColor = System.Drawing.Color.Green;
+                    Thread.Sleep(time*1000);
+                    microcontroller.SetCapsLockKey(false);
+                    CAPS.BackColor = System.Drawing.Color.White;
                     break;
                 case "выключить капслок":
                     microcontroller.SetCapsLockKey(false);
@@ -201,6 +213,9 @@ namespace HomeSystem
                 case "включить скроллок":
                     microcontroller.SetScrollLockKey(true);
                     SCROLL.BackColor = System.Drawing.Color.Green;
+                    Thread.Sleep(time * 1000);
+                    microcontroller.SetScrollLockKey(false);
+                    SCROLL.BackColor = System.Drawing.Color.White;
                     break;
                 case "выключить скроллок":
                     microcontroller.SetScrollLockKey(false);
